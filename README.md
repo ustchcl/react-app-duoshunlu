@@ -1,5 +1,10 @@
 # 多顺路 React 搭建 (Typescript版本)
 
+
+## 开发计划
+### 1. 如果简写`setState`?
+
+
 **dependences**  
 ```shell
 > npm install -g cnpm

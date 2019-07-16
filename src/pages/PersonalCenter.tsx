@@ -1,4 +1,4 @@
-import { Empty } from "../types/Type";
+import { Empty, Msg, Unit } from "../types/Type";
 import BaseComponent from "../basic/BaseComponent";
 import { NavBar, Icon, List } from "antd-mobile";
 import React from "react"
@@ -6,14 +6,14 @@ import { MyTabBar } from "./components/MyTabBar";
 
 const Item = List.Item;
 
-type Msg = {}
+type Message = Msg<Unit, Unit>
 
-export class PersonalCenter extends BaseComponent<Empty, Empty, Msg> {
+export class PersonalCenter extends BaseComponent<Empty, Empty, Message> {
     constructor(props: Empty) {
         super(props);
     }
 
-    eval(msg: Msg) {
+    eval(msg: Message) {
 
     }
 
@@ -39,20 +39,18 @@ export class PersonalCenter extends BaseComponent<Empty, Empty, Msg> {
                     </List>
 
                 </div>
-                <MyTabBar style={{ height: 400, width: "100%", position: 'fixed', bottom: 0}}/>
+                {/* <MyTabBar style={{ height: 400, width: "100%", position: 'fixed', bottom: 0}}/> */}
             </div>
-            
-            
         )
     }
 
-    renderItem(title: string, className: string, extra: string, show:boolean = false) {
+    renderItem(title: string, className: string, extra: string, showArrow: boolean = false) {
         return (
             <Item 
                 thumb={<i className={className}></i>}
                 extra={extra}
                 onClick={() => {}}
-                arrow= {show ? "horizontal" : ""}
+                arrow= {showArrow ? "horizontal" : ""}
             >{title}</Item>
         )
     }

@@ -1,7 +1,7 @@
 import { TabBar } from 'antd-mobile';
 import React from "react"
 import BaseComponent from '../../basic/BaseComponent';
-import { Empty, msg, MsgUnit, unitMsg, Msg } from '../../types/Type';
+import { Empty, msg, MsgUnit, unitMsg, Msg, unit, Tuple1, Tuple2 } from '../../types/Type';
 
 type Props = {
     style: React.CSSProperties
@@ -14,9 +14,9 @@ type State = {
 }
 
 type Message 
-    = MsgUnit<"SwitchHidden">
-    | MsgUnit<"SwitchFullScreen">
-    | Msg<"SelectTab", SelectedTab>
+    = Tuple1<"SwitchHidden">
+    | Tuple1<"SwitchFullScreen">
+    | Tuple2<"SelectTab", SelectedTab>
     
 type SelectedTab = "tab1" | "tab2" | "tab3" | "tab4"
 
@@ -31,9 +31,9 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
   }
 
   eval (msg: Message) {
-    switch (msg.typename) {
+    switch (msg[0]) {
         case "SelectTab": {
-            this.setState({selectedTab: msg.value});
+            this.setState({selectedTab: msg[1]});
             break;
         }
         case "SwitchFullScreen": {
@@ -52,18 +52,16 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
       <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
         <div style={{ paddingTop: 60 }}>Clicked “{pageText}” tab， show “{pageText}” information</div>
         <a style={{ display: 'block', marginTop: 40, marginBottom: 20, color: '#108ee9' }}
-          onClick={(e) => {
-            e.preventDefault();
-            this.send(unitMsg("SwitchHidden"))();
-          }}
+          onClick={this.onE((e) => {
+            return ["SwitchHidden"]
+          })}
         >
           Click to show/hide tab-bar
         </a>
         <a style={{ display: 'block', marginBottom: 600, color: '#108ee9' }}
-          onClick={(e) => {
-            e.preventDefault();
-            this.send(unitMsg("SwitchFullScreen"))();
-          }}
+          onClick={this.onE((e) => {
+            return ["SwitchFullScreen"];
+          })}
         >
           Click to switch fullscreen
         </a>
@@ -98,7 +96,7 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
             }
             selected={this.state.selectedTab === 'tab1'}
             badge={1}
-            onPress={this.send(msg("SelectTab", "tab1"))}
+            onPress={this.on(["SelectTab", "tab1"])}
             data-seed="logId"
           >
             {this.renderContent('Life')}
@@ -122,7 +120,7 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
             key="Koubei"
             badge={'new'}
             selected={this.state.selectedTab === 'tab2'}
-            onPress={this.send(msg("SelectTab", "tab2"))}
+            onPress={this.on(["SelectTab", "tab2"])}
             data-seed="logId1"
           >
             {this.renderContent('Koubei')}
@@ -146,7 +144,7 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
             key="Friend"
             dot
             selected={this.state.selectedTab === 'tab3'}
-            onPress={this.send(msg("SelectTab", "tab3"))}
+            onPress={this.on(["SelectTab", "tab3"])}
           >
             {this.renderContent('Friend')}
           </TabBar.Item>
@@ -156,7 +154,7 @@ export class MyTabBar extends BaseComponent<Props, State, Message> {
             title="My"
             key="my"
             selected={this.state.selectedTab === 'tab4'}
-            onPress={this.send(msg("SelectTab", "tab4"))}
+            onPress={this.on(["SelectTab", "tab4"])}
           >
             {this.renderContent('My')}
           </TabBar.Item>
