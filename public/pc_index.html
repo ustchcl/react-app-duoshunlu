@@ -1,0 +1,60 @@
+<html>
+<meta charset="utf-8">
+<title>桂顺</title>
+
+<style>
+    body {
+        font-family: "华文细黑";
+        background-size: 100% 100%;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+</style>
+
+<body>
+    <center>
+        <iframe src="" id="myiframe" scrolling="no" frameborder="0" style="float:center"></iframe>
+    </center>
+    <script>
+        function isPC() {
+            var userAgentInfo = navigator.userAgent;
+            var Agents = ["Android", "iPhone",
+                "SymbianOS", "Windows Phone",
+                "iPad", "iPod"];
+            var flag = true;
+            for (var v = 0; v < Agents.length; v++) {
+                if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
+        }
+
+        function changeFrameHeight() {
+            var div = document.getElementById("mydiv")
+            var ifm = document.getElementById("myiframe");
+            var height = document.body.clientHeight;
+            ifm.height = height;
+            ifm.width = height / 1366 * 768;
+            if (ifm.src.indexOf("pc_index") != -1) {
+                ifm.src ="./index.html" + window.location.search;
+            }
+        }
+        window.onresize = function () {
+            changeFrameHeight();
+        }
+
+        window.onload = function () {
+            if (this.isPC()) {
+                changeFrameHeight();
+            } else {
+                window.location.href = './index.html' + window.location.search;
+            }
+        }
+    </script>
+</body>
+
+</html>

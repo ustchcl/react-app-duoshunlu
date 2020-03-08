@@ -1,165 +1,140 @@
-import { TabBar } from 'antd-mobile';
-import React from "react"
-import BaseComponent from '../../basic/BaseComponent';
-import { Empty, msg, MsgUnit, unitMsg, Msg, unit, Tuple1, Tuple2 } from '../../types/Type';
+import { TabBar } from "antd-mobile";
+import React from "react";
+import BaseComponent from "../../basic/BaseComponent";
+import {
+  Empty,
+  msg,
+  MsgUnit,
+  unitMsg,
+  Msg,
+  unit,
+  Tuple1,
+  Tuple2
+} from "../../types/Type";
+import * as R from "ramda";
+import { DslRoute, routeToMenuTab } from "../Router";
+import { route } from "../../basic/GlobalEnv";
+import { TabKey } from "../../basic/Contants";
+import { ifNullThen } from "../../basic/BaseFunctions";
 
-type Props = {
-    style: React.CSSProperties
-}
-
+type Props = any;
 type State = {
-    selectedTab: SelectedTab,
-    hidden: boolean,
-    fullScreen: boolean
-}
+  selectedTab: MenuTab;
+};
 
-type Message 
-    = Tuple1<"SwitchHidden">
-    | Tuple1<"SwitchFullScreen">
-    | Tuple2<"SelectTab", SelectedTab>
-    
-type SelectedTab = "tab1" | "tab2" | "tab3" | "tab4"
+type Message =
+  | Tuple1<"SwitchHidden">
+  | Tuple1<"SwitchFullScreen">
+  | Tuple2<"SelectTab", MenuTab>;
 
-export class MyTabBar extends BaseComponent<Props, State, Message> {
+export type MenuTab =
+  | "首页"
+  | "我要年审"
+  | "我的订单"
+  | "邀请好友"
+  | "个人中心";
+
+const IconSrc = {
+  首页: ["icon_shouye", "icon_shouye2"],
+  我要年审: ["icon_woyaonianshen1", "icon_woyaonianshen2"],
+  我的订单: ["icon_wodedingdan1", "icon_wodedingdan2"],
+  邀请好友: ["icon_yaoqinghaoyou1", "icon_yaoqinghaoyou2"],
+  个人中心: ["icon_gerenzhongxin1", "icon_gerenzhongxin2"]
+};
+
+export default class MyTabBar extends BaseComponent<Props, State, Message> {
   constructor(props: Props) {
     super(props);
+
+    let tab: any = window.localStorage.getItem(TabKey);
     this.state = {
-      selectedTab: "tab1",
-      hidden: false,
-      fullScreen: false,
+      selectedTab: ifNullThen<MenuTab>(tab, "首页"),
     };
   }
 
-  eval (msg: Message) {
+  componentDidMount() {
+    this.subs = [
+        route.subscribe({ next: route => this.onChangeRoute(route) })
+    ];
+  }
+
+  eval(msg: Message) {
+    console.log(this.props);
     switch (msg[0]) {
-        case "SelectTab": {
-            this.setState({selectedTab: msg[1]});
-            break;
-        }
-        case "SwitchFullScreen": {
-            this.setState({fullScreen: !this.state.fullScreen});
-            break;
-        }
-        case "SwitchHidden": {
-            this.setState({hidden: !this.state.hidden});
-            break;
-        }
+      case "SelectTab": {
+        // this.setState({selectedTab: msg[1]});
+        this.goto(this.tabToLink(msg[1]));
+        break;
+      }
     }
   }
 
-  renderContent(pageText: string) {
-    return (
-      <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
-        <div style={{ paddingTop: 60 }}>Clicked “{pageText}” tab， show “{pageText}” information</div>
-        <a style={{ display: 'block', marginTop: 40, marginBottom: 20, color: '#108ee9' }}
-          onClick={this.onE((e) => {
-            return ["SwitchHidden"]
-          })}
-        >
-          Click to show/hide tab-bar
-        </a>
-        <a style={{ display: 'block', marginBottom: 600, color: '#108ee9' }}
-          onClick={this.onE((e) => {
-            return ["SwitchFullScreen"];
-          })}
-        >
-          Click to switch fullscreen
-        </a>
-      </div>
-    );
+  renderContent(tab: MenuTab) {
+    return <div />;
   }
 
   render() {
     return (
-      <div style={this.props.style}>
+      <div
+        style={{ height: "75px", width: "100%", position: "fixed", bottom: 0, zIndex: 998 }}
+      >
         <TabBar
-          unselectedTintColor="#949494"
-          tintColor="#33A3F4"
+          unselectedTintColor="#afaaaa"
+          tintColor="#e69b2e"
           barTintColor="white"
           tabBarPosition="bottom"
-          hidden={this.state.hidden}
+          hidden={false}
+          noRenderContent={true}
         >
-          <TabBar.Item
-            title="Life"
-            key="Life"
-            icon={<div style={{
-              width: '22px',
-              height: '22px',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  21px 21px no-repeat' }}
-            />
-            }
-            selectedIcon={<div style={{
-              width: '22px',
-              height: '22px',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  21px 21px no-repeat' }}
-            />
-            }
-            selected={this.state.selectedTab === 'tab1'}
-            badge={1}
-            onPress={this.on(["SelectTab", "tab1"])}
-            data-seed="logId"
-          >
-            {this.renderContent('Life')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={
-              <div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://gw.alipayobjects.com/zos/rmsportal/BTSsmHkPsQSPTktcXyTV.svg) center center /  21px 21px no-repeat' }}
-              />
-            }
-            selectedIcon={
-              <div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://gw.alipayobjects.com/zos/rmsportal/ekLecvKBnRazVLXbWOnE.svg) center center /  21px 21px no-repeat' }}
-              />
-            }
-            title="Koubei"
-            key="Koubei"
-            badge={'new'}
-            selected={this.state.selectedTab === 'tab2'}
-            onPress={this.on(["SelectTab", "tab2"])}
-            data-seed="logId1"
-          >
-            {this.renderContent('Koubei')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={
-              <div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/psUFoAMjkCcjqtUCNPxB.svg) center center /  21px 21px no-repeat' }}
-              />
-            }
-            selectedIcon={
-              <div style={{
-                width: '22px',
-                height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/IIRLrXXrFAhXVdhMWgUI.svg) center center /  21px 21px no-repeat' }}
-              />
-            }
-            title="Friend"
-            key="Friend"
-            dot
-            selected={this.state.selectedTab === 'tab3'}
-            onPress={this.on(["SelectTab", "tab3"])}
-          >
-            {this.renderContent('Friend')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}
-            selectedIcon={{ uri: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg' }}
-            title="My"
-            key="my"
-            selected={this.state.selectedTab === 'tab4'}
-            onPress={this.on(["SelectTab", "tab4"])}
-          >
-            {this.renderContent('My')}
-          </TabBar.Item>
+          {this.renderItem("首页")}
+          {this.renderItem("我要年审")}
+          {this.renderItem("我的订单")}
+          {this.renderItem("邀请好友")}
+          {this.renderItem("个人中心")}
         </TabBar>
       </div>
     );
+  }
+
+  renderItem(tab: MenuTab) {
+    return (
+      <TabBar.Item
+        title={tab}
+        key={tab}
+        icon={<i className={IconSrc[tab][0]} />}
+        selectedIcon={<i className={IconSrc[tab][1]} />}
+        selected={this.state.selectedTab === tab}
+        onPress={this.on(["SelectTab", tab])}
+        data-seed={tab}
+      >
+        {this.renderContent(tab)}
+      </TabBar.Item>
+    );
+  }
+
+  tabToLink(tab: MenuTab): DslRoute {
+    switch (tab) {
+      case "个人中心":
+        return ["PersonalCenterUser"];
+      case "我的订单":
+        return ["MyOrders"];
+      case "我要年审":
+        return ["CreateOrder"];
+      case "邀请好友":
+        return ["Share"];
+      case "首页":
+        return ["Main"];
+    }
+  }
+
+  onChangeRoute(route: DslRoute) {
+      if (["MyCars", "CarInfo", "CreateCar"].indexOf(route[0]) != -1) {
+          return;
+      }
+      let mmt = routeToMenuTab(route);
+      if (mmt.valid) {
+          window.localStorage.setItem(TabKey, mmt.val);
+          this.set({selectedTab: mmt.val});
+      }
   }
 }
